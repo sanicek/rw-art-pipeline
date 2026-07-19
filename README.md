@@ -20,6 +20,29 @@ The command also works without installation from this checkout:
 python3 -m rw_art_pipeline --help
 ```
 
+## Bundled templates
+
+`rw-art` carries provider-independent artwork templates for reuse across mods
+and other projects. Stable catalog IDs hide package-internal paths, and export
+preserves the exact approved PNG bytes:
+
+```bash
+rw-art templates list
+rw-art templates show sanicek-badge
+
+# Canonical 1024x1024 RGBA source for unrestricted downstream composition.
+rw-art templates export sanicek-badge source ./sanicek-logo.png
+
+# Normalized 256x256 RGBA frame for RimWorld's About/ModIcon.png.
+rw-art templates export sanicek-badge rimworld-mod-icon ./About/ModIcon.png
+```
+
+Exports never overwrite an existing file unless `--replace` is supplied. The
+catalog records dimensions, color mode, semantic role, and SHA-256 for every
+variant; installed wheels contain both the catalog and exact image resources.
+Templates are distributed under this repository's MIT license and contain no
+Scenario project IDs, credentials, or local generation receipts.
+
 ## Workflow
 
 ```bash

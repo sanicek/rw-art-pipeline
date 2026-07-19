@@ -22,6 +22,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from . import __version__
+
 
 class ScenarioError(Exception):
     """A safe-to-display Scenario configuration or API failure."""
@@ -35,6 +37,7 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 SCENARIO_ASSET_HOSTS = {"cdn.cloud.scenario.com", "cdn.scenario.com", "media.scenario.com"}
+USER_AGENT = f"rw-art-pipeline/{__version__}"
 
 
 class _SafeAssetRedirect(urllib.request.HTTPRedirectHandler):
@@ -44,7 +47,7 @@ class _SafeAssetRedirect(urllib.request.HTTPRedirectHandler):
         parsed = urllib.parse.urlparse(new_url)
         if parsed.scheme != "https" or parsed.hostname not in SCENARIO_ASSET_HOSTS:
             raise urllib.error.HTTPError(new_url, code, "unsafe Scenario asset redirect", headers, file_pointer)
-        return urllib.request.Request(new_url, headers={"User-Agent": "rw-art-pipeline/0.2"}, method=request.get_method())
+        return urllib.request.Request(new_url, headers={"User-Agent": USER_AGENT}, method=request.get_method())
 
 
 @dataclass(frozen=True)
@@ -137,7 +140,7 @@ class ScenarioClient:
             "Authorization": f"Basic {token}",
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "rw-art-pipeline/0.2",
+            "User-Agent": USER_AGENT,
         }
 
     def _request(
@@ -198,7 +201,7 @@ class ScenarioClient:
         parsed = urllib.parse.urlparse(url)
         if parsed.scheme != "https" or parsed.hostname not in SCENARIO_ASSET_HOSTS:
             raise ScenarioError(f"Scenario asset URL is not on an approved HTTPS CDN: {url!r}")
-        request = urllib.request.Request(url, headers={"User-Agent": "rw-art-pipeline/0.2"})
+        request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         descriptor, temporary_name = tempfile.mkstemp(prefix=".download-", dir=destination.parent)
         temporary = Path(temporary_name)
         try:

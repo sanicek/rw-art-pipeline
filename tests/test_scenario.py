@@ -9,10 +9,12 @@ import urllib.request
 from pathlib import Path
 from unittest.mock import patch
 
+from rw_art_pipeline import __version__
 from rw_art_pipeline.scenario import (
     ScenarioClient,
     ScenarioCredentials,
     ScenarioError,
+    USER_AGENT,
     job_id,
     job_status,
     load_credentials,
@@ -23,6 +25,11 @@ from rw_art_pipeline.scenario import (
 
 
 class ScenarioTests(unittest.TestCase):
+    def test_user_agent_matches_package_version(self):
+        self.assertEqual(f"rw-art-pipeline/{__version__}", USER_AGENT)
+        client = ScenarioClient(ScenarioCredentials("key", "secret"))
+        self.assertEqual(USER_AGENT, client.headers["User-Agent"])
+
     def test_environment_credentials_take_precedence(self):
         with patch.dict(os.environ, {"SCENARIO_API_KEY": "key", "SCENARIO_API_SECRET": "secret"}, clear=False):
             credentials = load_credentials()

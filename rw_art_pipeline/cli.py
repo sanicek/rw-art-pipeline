@@ -40,6 +40,7 @@ from .scenario import (
     result_assets,
     store_credentials_interactive,
 )
+from .template_catalog import TemplateError, export_template, get_template, get_variant, templates
 
 
 class PipelineError(Exception):
@@ -1465,13 +1466,43 @@ def build_parser() -> argparse.ArgumentParser:
     approve_parser.add_argument("--replace", action="store_true")
     validate_parser = subparsers.add_parser("validate", help="validate all promoted outputs")
     validate_parser.add_argument("manifest", type=Path)
+    templates_parser = subparsers.add_parser("templates", help="discover and export bundled artwork templates")
+    template_commands = templates_parser.add_subparsers(dest="template_command", required=True)
+    template_commands.add_parser("list", help="list bundled template IDs")
+    template_show = template_commands.add_parser("show", help="show one template and its variants")
+    template_show.add_argument("template")
+    template_export = template_commands.add_parser("export", help="export one exact template variant")
+    template_export.add_argument("template")
+    template_export.add_argument("variant")
+    template_export.add_argument("destination", type=Path)
+    template_export.add_argument("--replace", action="store_true")
     return parser
+
+
+def run_template_command(args: argparse.Namespace) -> None:
+    """Serve provider-independent package resources without loading a manifest."""
+    if args.template_command == "list":
+        for template in templates():
+            print(f"{template.id}\t{template.name}")
+        return
+    template = get_template(args.template)
+    if args.template_command == "show":
+        print(f"{template.id}: {template.name}\n{template.description}\nLicense: {template.license}")
+        for variant in template.variants:
+            print(f"  {variant.id}\t{variant.width}x{variant.height} {variant.mode}\t{variant.role}")
+        return
+    variant = get_variant(template.id, args.variant)
+    destination = export_template(template.id, variant.id, args.destination, args.replace)
+    print(f"Exported template: {destination}\nSHA-256: {variant.sha256}")
 
 
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
     try:
+        if args.command == "templates":
+            run_template_command(args)
+            return
         manifest = load_manifest(args.manifest)
         root = state_root(manifest, args.state_dir)
         if args.command == "prompt":
@@ -1500,7 +1531,7 @@ def main() -> None:
             approve(manifest, args.request, root, args.replace)
         elif args.command == "validate":
             validate(manifest)
-    except PipelineError as error:
+    except (PipelineError, TemplateError) as error:
         parser.exit(1, f"Error: {error}\n")
 
 

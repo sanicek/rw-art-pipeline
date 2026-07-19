@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "templates": [
+    {
+      "id": "sanicek-badge",
+      "name": "Sanicek Badge",
+      "description": "Reusable grayscale maker badge with an empty lower field for project-specific artwork.",
+      "license": "MIT",
+      "variants": [
+        {
+          "id": "source",
+          "role": "canonical-source",
+          "path": "sanicek-badge/source.png",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "sha256": "100e0d38ce7e546ca45bfe5facc3ac6fa8267e214d7f9404121b8a7f81efef75"
+        },
+        {
+          "id": "rimworld-mod-icon",
+          "role": "rimworld-mod-icon-frame",
+          "path": "sanicek-badge/rimworld-mod-icon.png",
+          "width": 256,
+          "height": 256,
+          "mode": "RGBA",
+          "sha256": "87fb2537410403305cf8970a97046a48e24ca1f7fb645ff32e212206a8eb2d53"
+        }
+      ]
+    }
+  ]
+}
