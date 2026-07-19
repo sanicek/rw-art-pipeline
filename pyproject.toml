@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rw-art-pipeline"
+version = "0.2.0"
+description = "Human-in-the-loop artwork intake for RimWorld mods"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["Pillow>=10"]
+
+[project.scripts]
+rw-art = "rw_art_pipeline.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["rw_art_pipeline*"]
