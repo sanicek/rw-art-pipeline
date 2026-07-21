@@ -2,6 +2,41 @@
   "schema_version": 1,
   "templates": [
     {
+      "id": "generic-workbench-1x1",
+      "name": "Generic 1x1 Workbench",
+      "description": "South-facing pseudo-orthographic white industrial workbench base with an empty surface and two recolor channels; generated vector source is available in the source repository.",
+      "license": "MIT",
+      "variants": [
+        {
+          "id": "source",
+          "role": "canonical-source",
+          "path": "generic-workbench-1x1/source.png",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "sha256": "e726175885f6e712d074175121f62499feb82eda5a67f972f9e50f4c12abfc85"
+        },
+        {
+          "id": "rimworld-texture",
+          "role": "rimworld-1x1-south-texture",
+          "path": "generic-workbench-1x1/rimworld-texture.png",
+          "width": 128,
+          "height": 128,
+          "mode": "RGBA",
+          "sha256": "c97a8c4684f2aa0107091167a3bb2e44955eba6cffffbd6f7723237449309846"
+        },
+        {
+          "id": "rimworld-color-mask",
+          "role": "rimworld-cutout-complex-mask",
+          "path": "generic-workbench-1x1/rimworld-texturem.png",
+          "width": 128,
+          "height": 128,
+          "mode": "RGBA",
+          "sha256": "697218e1916b90e71ecde69a269ca3e35d78307411897a16f30f3ca3943e605c"
+        }
+      ]
+    },
+    {
       "id": "sanicek-badge",
       "name": "Sanicek Badge",
       "description": "Reusable grayscale maker badge with an empty lower field for project-specific artwork.",

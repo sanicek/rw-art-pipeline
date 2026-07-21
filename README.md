@@ -35,6 +35,10 @@ rw-art templates export sanicek-badge source ./sanicek-logo.png
 
 # Normalized 256x256 RGBA frame for RimWorld's About/ModIcon.png.
 rw-art templates export sanicek-badge rimworld-mod-icon ./About/ModIcon.png
+
+# South-facing 1x1 workbench base and its CutoutComplex recolor mask.
+rw-art templates export generic-workbench-1x1 rimworld-texture ./Textures/Things/Building/GenericWorkbench.png
+rw-art templates export generic-workbench-1x1 rimworld-color-mask ./Textures/Things/Building/GenericWorkbench_m.png
 ```
 
 Exports never overwrite an existing file unless `--replace` is supplied. The
@@ -42,6 +46,43 @@ catalog records dimensions, color mode, semantic role, and SHA-256 for every
 variant; installed wheels contain both the catalog and exact image resources.
 Templates are distributed under this repository's MIT license and contain no
 Scenario project IDs, credentials, or local generation receipts.
+
+### Generic workbench composition
+
+`generic-workbench-1x1` is a `128x128` industrial base for one-cell work
+tables. It uses RimWorld's south-facing pseudo-orthographic view: the top is
+foreshortened while the front apron remains visible. The diffuse texture is
+neutral white/gray so recoloring is not biased by a baked hue. Put mod-specific
+tools inside the inset surface, bounded approximately by SVG coordinates
+`(24,31)` through `(104,71)`, and draw them at the same viewing angle. The
+bundled texture is suitable for `Graphic_Single` buildings that keep a fixed
+presentation. Treat it as the south texture when deriving a true
+`Graphic_Multi` set; other facings need corresponding perspective changes.
+
+The generated vector source is
+`artwork_sources/generic-workbench-1x1/source.svg`. It is available in a source
+checkout, but is not included in installed wheels. Its named groups separate
+the neutral hardware, primary frame tint, secondary work-surface tint, and a
+hidden overlay guide. The Python generator is authoritative: change `PALETTE`
+or geometry in `tools/generate_generic_workbench.py`, then regenerate the SVG
+and catalog PNGs with:
+
+```bash
+python3 tools/generate_generic_workbench.py --replace-source
+python3 tools/generate_generic_workbench.py --check
+```
+
+The explicit `--replace-source` prevents regeneration from silently discarding
+manual SVG edits. `--check` also validates PNG dimensions, modes, paths, and
+SHA-256 values against the template catalog; after an intentional artwork
+change, update the reported catalog hashes before expecting the check to pass.
+
+For in-game coloring, place `rimworld-texture` at the Def's `texPath`, place
+`rimworld-color-mask` beside it with the `_m` suffix, and use
+`<shaderType>CutoutComplex</shaderType>`. The red mask channel controls the
+frame, the green channel controls the inset work surface, and black areas keep
+their neutral shading. A typical one-cell Def uses `<size>(1,1)</size>` and
+`<drawSize>(1,1)</drawSize>`.
 
 ## Workflow
 

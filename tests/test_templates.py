@@ -1,6 +1,8 @@
 import hashlib
 import io
 import json
+import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -25,12 +27,20 @@ from rw_art_pipeline.template_catalog import (
 class TemplateTests(unittest.TestCase):
     """The bundled catalog is a stable byte-level distribution contract."""
 
-    def test_catalog_exposes_both_sanicek_badge_variants(self):
+    def test_catalog_exposes_templates_and_sanicek_badge_variants(self):
         catalog = templates()
-        self.assertEqual(["sanicek-badge"], [template.id for template in catalog])
+        self.assertEqual(["generic-workbench-1x1", "sanicek-badge"], [template.id for template in catalog])
         badge = get_template("sanicek-badge")
         self.assertEqual("MIT", badge.license)
         self.assertEqual({"source", "rimworld-mod-icon"}, {variant.id for variant in badge.variants})
+
+    def test_catalog_exposes_generic_workbench_variants(self):
+        workbench = get_template("generic-workbench-1x1")
+        self.assertEqual("MIT", workbench.license)
+        self.assertEqual(
+            {"source", "rimworld-texture", "rimworld-color-mask"},
+            {variant.id for variant in workbench.variants},
+        )
 
     def test_variants_match_their_exact_png_contracts(self):
         expected = {
@@ -46,6 +56,51 @@ class TemplateTests(unittest.TestCase):
                 with Image.open(path) as image:
                     image.load()
                     self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+
+    def test_workbench_variants_match_their_exact_png_contracts(self):
+        expected = {
+            "source": ((1024, 1024), "e726175885f6e712d074175121f62499feb82eda5a67f972f9e50f4c12abfc85"),
+            "rimworld-texture": ((128, 128), "c97a8c4684f2aa0107091167a3bb2e44955eba6cffffbd6f7723237449309846"),
+            "rimworld-color-mask": ((128, 128), "697218e1916b90e71ecde69a269ca3e35d78307411897a16f30f3ca3943e605c"),
+        }
+        for variant_id, (size, digest) in expected.items():
+            payload = template_bytes("generic-workbench-1x1", variant_id)
+            self.assertEqual(digest, hashlib.sha256(payload).hexdigest())
+            with Image.open(io.BytesIO(payload)) as image:
+                image.load()
+                self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+
+    def test_workbench_mask_recolors_frame_and_surface_only(self):
+        with Image.open(io.BytesIO(template_bytes("generic-workbench-1x1", "rimworld-texture"))) as texture:
+            texture.load()
+            texture_alpha = texture.getchannel("A").tobytes()
+        with Image.open(io.BytesIO(template_bytes("generic-workbench-1x1", "rimworld-color-mask"))) as mask:
+            mask.load()
+            self.assertEqual(texture_alpha, mask.getchannel("A").tobytes())
+            self.assertEqual((0, 0), mask.getchannel("B").getextrema())
+            self.assertEqual((255, 0, 0), mask.getpixel((18, 50))[:3])
+            self.assertEqual((255, 0, 0), mask.getpixel((64, 90))[:3])
+            self.assertEqual((0, 255, 0, 255), mask.getpixel((64, 64)))
+            for point in ((20, 28), (64, 110), (12, 50), (16, 96), (118, 50)):
+                self.assertTrue(all(channel <= 1 for channel in mask.getpixel(point)[:3]))
+
+    def test_workbench_svg_defines_every_referenced_palette_variable(self):
+        root = Path(__file__).resolve().parents[1]
+        svg = (root / "artwork_sources/generic-workbench-1x1/source.svg").read_text(encoding="utf-8")
+        definitions = set(re.findall(r"(--[a-z-]+)\s*:", svg))
+        references = set(re.findall(r"var\((--[a-z-]+)\)", svg))
+        self.assertEqual(set(), references - definitions)
+
+    def test_workbench_assets_are_reproducible(self):
+        root = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, str(root / "tools/generate_generic_workbench.py"), "--check"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
     def test_export_preserves_bytes_and_requires_explicit_replacement(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 128 128">
+  <title>Generic 1x1 RimWorld workbench base</title>
+  <desc>South-facing industrial workbench with a foreshortened top and a clear tool-overlay area.</desc>
+  <style>
+    :root {
+      --outline: #343839;
+      --primary: #d9dddc;
+      --primary-dark: #aeb4b3;
+      --primary-light: #ffffff;
+      --surface: #e8e7e2;
+      --surface-dark: #bdbdb8;
+      --surface-light: #ffffff;
+      --hardware: #626868;
+      --hardware-light: #e8ece9;
+    }
+    .outline { fill: var(--outline); }
+    .bolt-highlight { fill: var(--hardware-light); stroke: none; }
+  </style>
+  <g id="front-apron" inkscape:groupmode="layer" inkscape:label="Front apron">
+    <polygon points="14,72 22,80 106,80 114,72 114,96 106,104 22,104 14,96" fill="var(--outline)"/>
+    <polygon points="19,80 24,85 104,85 109,80 109,94 103,100 25,100 19,94" fill="var(--primary-dark)"/>
+    <path d="M24 85 H104 L109 80" fill="none" stroke="var(--primary)" stroke-width="2"/>
+  </g>
+  <g id="primary-tint" inkscape:groupmode="layer" inkscape:label="Primary tint">
+    <polygon points="18,18 110,18 118,26 118,78 110,86 18,86 10,78 10,26" fill="var(--outline)"/>
+    <polygon points="21,22 107,22 114,29 114,75 107,82 21,82 14,75 14,29" fill="var(--primary)"/>
+    <path d="M21 22 H107 L114 29" fill="none" stroke="var(--primary-light)" stroke-width="2"/>
+    <path d="M114 75 L107 82 H21" fill="none" stroke="var(--primary-dark)" stroke-width="2"/>
+  </g>
+  <g id="secondary-tint" inkscape:groupmode="layer" inkscape:label="Secondary tint and tool-overlay area">
+    <polygon points="29,28 99,28 108,37 108,66 99,75 29,75 20,66 20,37" fill="var(--surface-dark)"/>
+    <polygon points="31,31 97,31 104,38 104,64 97,71 31,71 24,64 24,38" fill="var(--surface)"/>
+    <path d="M31 31 H97 L104 38" fill="none" stroke="var(--surface-light)" stroke-width="2"/>
+    <path d="M104 64 L97 71 H31" fill="none" stroke="var(--surface-dark)" stroke-width="2"/>
+  </g>
+  <g id="hardware" inkscape:groupmode="layer" inkscape:label="Neutral hardware" fill="var(--hardware)" stroke="var(--outline)" stroke-width="2">
+    <g transform="translate(20 28)"><circle r="3"/><ellipse cx="0" cy="-1" rx="1" ry="1" class="bolt-highlight"/></g>
+    <g transform="translate(108 28)"><circle r="3"/><ellipse cx="0" cy="-1" rx="1" ry="1" class="bolt-highlight"/></g>
+    <g transform="translate(108 74)"><circle r="3"/><ellipse cx="0" cy="-1" rx="1" ry="1" class="bolt-highlight"/></g>
+    <g transform="translate(20 74)"><circle r="3"/><ellipse cx="0" cy="-1" rx="1" ry="1" class="bolt-highlight"/></g>
+  </g>
+  <g id="overlay-guide" inkscape:groupmode="layer" inkscape:label="Tool overlay guide (hidden)" display="none">
+    <path d="M31 31 H97 L104 38 V64 L97 71 H31 L24 64 V38 Z" fill="none" stroke="#ff00ff" stroke-dasharray="2 2"/>
+  </g>
+</svg>
