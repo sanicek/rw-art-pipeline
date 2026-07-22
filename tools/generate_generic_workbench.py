@@ -37,10 +37,10 @@ DESK_CABINET_FACE = [(16, 75), (112, 75), (112, 98), (107, 103), (21, 103), (16,
 # The cube template keeps the proportions of one mirrored end segment from a
 # three-cell vanilla worktable, but uses original symmetric geometry. One plain
 # top and front apron form a neutral grayscale base that stuff recolors wholly.
-CUBE_TOP = [(19, 12), (109, 12), (109, 98), (19, 98)]
-CUBE_SURFACE = [(22, 15), (106, 15), (106, 95), (22, 95)]
-CUBE_APRON = [(19, 94), (109, 94), (109, 110), (19, 110)]
-CUBE_APRON_FACE = [(22, 98), (106, 98), (106, 107), (22, 107)]
+CUBE_TOP = [(21, 13), (107, 13), (107, 98), (21, 98)]
+CUBE_SURFACE = [(26, 18), (102, 18), (102, 94), (26, 94)]
+CUBE_APRON = [(21, 94), (107, 94), (107, 110), (21, 110)]
+CUBE_APRON_FACE = [(26, 94), (102, 94), (102, 105), (26, 105)]
 
 PALETTE = {
     "outline": "#343839",
@@ -187,10 +187,9 @@ def draw_cube_texture(size: int) -> Image.Image:
     draw = ImageDraw.Draw(image)
 
     draw.polygon(_points(CUBE_APRON, scale), fill=PALETTE["outline"])
-    draw.polygon(_points(CUBE_APRON_FACE, scale), fill=PALETTE["primary_dark"])
     draw.polygon(_points(CUBE_TOP, scale), fill=PALETTE["outline"])
 
-    surface_bounds = _box((22, 15, 107, 96), scale)
+    surface_bounds = _box((26, 18, 103, 95), scale)
     surface_width = surface_bounds[2] - surface_bounds[0]
     surface_height = surface_bounds[3] - surface_bounds[1]
     gradient = Image.new("RGBA", (surface_width, surface_height), (0, 0, 0, 0))
@@ -204,6 +203,7 @@ def draw_cube_texture(size: int) -> Image.Image:
     surface_mask = Image.new("L", image.size, 0)
     ImageDraw.Draw(surface_mask).polygon(_points(CUBE_SURFACE, scale), fill=255)
     image.paste(gradient, surface_bounds[:2], surface_mask.crop(surface_bounds))
+    ImageDraw.Draw(image).polygon(_points(CUBE_APRON_FACE, scale), fill=PALETTE["primary_dark"])
 
     return _mirror_right_half(image.resize((size, size), Image.Resampling.LANCZOS))
 
@@ -242,9 +242,9 @@ def cube_svg() -> bytes:
   </defs>
   <g id="cube" inkscape:groupmode="layer" inkscape:label="Stuff-colored cube">
     <polygon points="{points['apron']}" fill="{PALETTE['outline']}"/>
-    <polygon points="{points['apron_face']}" fill="{PALETTE['primary_dark']}"/>
     <polygon points="{points['top']}" fill="{PALETTE['outline']}"/>
     <polygon points="{points['surface']}" fill="url(#surface-light)"/>
+    <polygon points="{points['apron_face']}" fill="{PALETTE['primary_dark']}"/>
   </g>
 </svg>
 '''

@@ -4,7 +4,7 @@
     {
       "id": "generic-cube-workbench-1x1",
       "name": "Generic Cube Workbench 1x1",
-      "description": "Symmetric fixed-perspective blank cube workbench with plain vanilla-style geometry, full-stuff recoloring, and no preferred interaction side; generated vector source is available in the source repository.",
+      "description": "Canonical symmetric fixed-perspective blank cube workbench with vanilla-style geometry, full-stuff recoloring, and no preferred interaction side; generated vector and RimWorld XML references are available in the source repository.",
       "license": "MIT",
       "variants": [
         {
@@ -14,7 +14,7 @@
           "width": 1024,
           "height": 1024,
           "mode": "RGBA",
-          "sha256": "1bd59cf161430b30ebc7c17f9eb0284bc5728e941f493dd554541fb311e56933"
+          "sha256": "90232b79a46e38347cac9d4e37cdefaa1a26ed187648a9b1b3c648a9e3879013"
         },
         {
           "id": "rimworld-texture",
@@ -23,7 +23,7 @@
           "width": 128,
           "height": 128,
           "mode": "RGBA",
-          "sha256": "4da3b2b9a06ccac1a879da532946ff28f79120280bd41cbff10c6467c9794fad"
+          "sha256": "3dd636662abd3032c2989dc7305f9e2e62982701cdb47ab28976e6bc05f50a1f"
         },
         {
           "id": "rimworld-color-mask",
@@ -32,7 +32,7 @@
           "width": 128,
           "height": 128,
           "mode": "RGBA",
-          "sha256": "75aae84875fe21129a39f2aa9e4ca571339cacdfb495fbeb489889111138fa0c"
+          "sha256": "3abf5f5fc20e76e9c7e55dc1ca41dd31ac39e2948f5ab425cbba8177541a1adc"
         }
       ]
     },

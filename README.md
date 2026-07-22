@@ -72,13 +72,23 @@ contract but has a broader rectangular top over a full-width two-door cabinet.
 It has no visible legs or cast shadow. Its overlay-safe work surface spans
 approximately `(20,32)` through `(108,64)` in the SVG coordinate system.
 
-`generic-cube-workbench-1x1` is a broad, horizontally symmetric blank slab for
-one-cell buildings whose graphic stays fixed while their interaction spot can
-rotate. Its plain top and front apron share the red stuff-color channel, so the
-complete cube follows its material. The visible `96x104` slab leaves enough transparent
+`generic-cube-workbench-1x1` is the canonical broad, horizontally symmetric
+blank slab for one-cell buildings whose graphic stays fixed while their
+interaction spot can rotate. Its plain top and front apron share the red
+stuff-color channel, so the complete cube follows its material. The darker
+apron meets the top directly, so their tonal change defines the front edge
+without a black divider. The visible `92x103` slab leaves enough transparent
 canvas to fit one standard bench cell on a square draw mesh. A typical Def uses
 `Graphic_Single`, `<drawSize>(1.5,1.5)</drawSize>`,
 `<drawRotated>false</drawRotated>`, and `<allowFlip>false</allowFlip>`.
+
+The complete, validated RimWorld 1.6 setup is
+[`reference-assets/generic-cube-workbench-1x1/ThingDef.xml`](reference-assets/generic-cube-workbench-1x1/ThingDef.xml).
+It includes the exact `Graphic_Single`, `CutoutComplex`, square draw mesh,
+rotation, shadow, interaction-cell, and common southward offset settings used
+for the accepted in-game appearance. A consuming Def must also be stuffable for
+the red-channel mask to receive its material color. Keep directional draw
+offsets absent because they override the common `(0,0,-0.1)` alignment offset.
 
 The generated vector sources are under matching template directories in
 `artwork_sources/`. They are available in a source checkout but are not included

@@ -9,9 +9,9 @@
     </radialGradient>
   </defs>
   <g id="cube" inkscape:groupmode="layer" inkscape:label="Stuff-colored cube">
-    <polygon points="19,94 109,94 109,110 19,110" fill="#343839"/>
-    <polygon points="22,98 106,98 106,107 22,107" fill="#aeb4b3"/>
-    <polygon points="19,12 109,12 109,98 19,98" fill="#343839"/>
-    <polygon points="22,15 106,15 106,95 22,95" fill="url(#surface-light)"/>
+    <polygon points="21,94 107,94 107,110 21,110" fill="#343839"/>
+    <polygon points="21,13 107,13 107,98 21,98" fill="#343839"/>
+    <polygon points="26,18 102,18 102,94 26,94" fill="url(#surface-light)"/>
+    <polygon points="26,94 102,94 102,105 26,105" fill="#aeb4b3"/>
   </g>
 </svg>

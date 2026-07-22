@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from contextlib import redirect_stdout
 from importlib import resources
 from pathlib import Path
@@ -122,6 +123,11 @@ class TemplateTests(unittest.TestCase):
         mask = draw_cube_mask(texture)
         self.assertEqual((128, 128), texture.size)
         self.assertEqual("RGBA", texture.mode)
+        self.assertEqual((18, 10, 110, 113), texture.getchannel("A").getbbox())
+        self.assertLess(texture.getpixel((64, 16))[0], 100)
+        self.assertLess(texture.getpixel((64, 17))[0], 100)
+        self.assertGreater(min(texture.getpixel((64, y))[0] for y in range(94, 100)), 120)
+        self.assertLess(texture.getpixel((64, 100))[0], texture.getpixel((64, 90))[0])
         self.assertEqual(texture.getchannel("A").tobytes(), mask.getchannel("A").tobytes())
         self.assertEqual(texture.getchannel("A").tobytes(), texture.transpose(Image.Transpose.FLIP_LEFT_RIGHT).getchannel("A").tobytes())
         self.assertEqual((255, 0, 0), mask.getpixel((20, 50))[:3])
@@ -132,9 +138,9 @@ class TemplateTests(unittest.TestCase):
 
     def test_cube_workbench_variants_match_their_exact_png_contracts(self):
         expected = {
-            "source": ((1024, 1024), "1bd59cf161430b30ebc7c17f9eb0284bc5728e941f493dd554541fb311e56933"),
-            "rimworld-texture": ((128, 128), "4da3b2b9a06ccac1a879da532946ff28f79120280bd41cbff10c6467c9794fad"),
-            "rimworld-color-mask": ((128, 128), "75aae84875fe21129a39f2aa9e4ca571339cacdfb495fbeb489889111138fa0c"),
+            "source": ((1024, 1024), "90232b79a46e38347cac9d4e37cdefaa1a26ed187648a9b1b3c648a9e3879013"),
+            "rimworld-texture": ((128, 128), "3dd636662abd3032c2989dc7305f9e2e62982701cdb47ab28976e6bc05f50a1f"),
+            "rimworld-color-mask": ((128, 128), "3abf5f5fc20e76e9c7e55dc1ca41dd31ac39e2948f5ab425cbba8177541a1adc"),
         }
         for variant_id, (size, digest) in expected.items():
             payload = template_bytes("generic-cube-workbench-1x1", variant_id)
@@ -142,6 +148,31 @@ class TemplateTests(unittest.TestCase):
             with Image.open(io.BytesIO(payload)) as image:
                 image.load()
                 self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+
+    def test_cube_workbench_rimworld_reference_preserves_rendering_contract(self):
+        root = Path(__file__).resolve().parents[1]
+        thing = ET.parse(root / "reference-assets/generic-cube-workbench-1x1/ThingDef.xml").getroot().find("ThingDef")
+        self.assertIsNotNone(thing)
+        self.assertEqual("(1,1)", thing.findtext("size"))
+        self.assertEqual("true", thing.findtext("rotatable"))
+        self.assertEqual("true", thing.findtext("hasInteractionCell"))
+        self.assertEqual("(0,0,-1)", thing.findtext("interactionCellOffset"))
+        self.assertEqual("true", thing.findtext("castEdgeShadows"))
+        self.assertEqual("0.20", thing.findtext("staticSunShadowHeight"))
+        graphic = thing.find("graphicData")
+        self.assertIsNotNone(graphic)
+        self.assertEqual(
+            {
+                "texPath": "Things/Building/YourMod/YourWorkbench",
+                "graphicClass": "Graphic_Single",
+                "shaderType": "CutoutComplex",
+                "drawSize": "(1.5,1.5)",
+                "drawRotated": "false",
+                "allowFlip": "false",
+                "drawOffset": "(0,0,-0.1)",
+            },
+            {child.tag: child.text for child in graphic},
+        )
 
     def test_workbench_svg_defines_every_referenced_palette_variable(self):
         root = Path(__file__).resolve().parents[1]
