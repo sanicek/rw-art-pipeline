@@ -124,16 +124,16 @@ class TemplateTests(unittest.TestCase):
         self.assertEqual("RGBA", texture.mode)
         self.assertEqual(texture.getchannel("A").tobytes(), mask.getchannel("A").tobytes())
         self.assertEqual(texture.getchannel("A").tobytes(), texture.transpose(Image.Transpose.FLIP_LEFT_RIGHT).getchannel("A").tobytes())
-        self.assertEqual((255, 0, 0), mask.getpixel((12, 50))[:3])
+        self.assertEqual((255, 0, 0), mask.getpixel((23, 50))[:3])
         self.assertEqual((0, 255, 0), mask.getpixel((64, 60))[:3])
         self.assertEqual((255, 0, 0), mask.getpixel((64, 108))[:3])
-        self.assertTrue(all(channel <= 8 for channel in mask.getpixel((7, 50))[:3]))
+        self.assertTrue(all(channel <= 8 for channel in mask.getpixel((20, 50))[:3]))
 
     def test_cube_workbench_variants_match_their_exact_png_contracts(self):
         expected = {
-            "source": ((1024, 1024), "753ac928cc1522ea540373bf618fd08c875321e4f7d297e6ee00e42a0df99219"),
-            "rimworld-texture": ((128, 128), "f8902f84876377985ea0cfec378d564e3a720b22aae9c52b601b012056f18d11"),
-            "rimworld-color-mask": ((128, 128), "cd7ae393251af51bb88ace0961fcd49d4456513fe7a0beb9dc4f8dee9d2fd865"),
+            "source": ((1024, 1024), "81ce69079a90da3f77eeaf70f5355c4b88dc6a1b9a766966a17e606459eab3a9"),
+            "rimworld-texture": ((128, 128), "fc3aff67a72a181a35b0dffcccce36a8d14632ddeb47a5cb594e5944421750a2"),
+            "rimworld-color-mask": ((128, 128), "d04af9edf226198dbf6dca48571a1b0055f28766e97ee4ff943ff6021da68785"),
         }
         for variant_id, (size, digest) in expected.items():
             payload = template_bytes("generic-cube-workbench-1x1", variant_id)

@@ -76,8 +76,8 @@ approximately `(20,32)` through `(108,64)` in the SVG coordinate system.
 one-cell buildings whose graphic stays fixed while their interaction spot can
 rotate. Its shell and front apron use the red stuff-color channel; its large
 neutral worktop uses the green secondary channel and provides an overlay-safe
-surface bounded approximately by `(16,16)` through `(112,94)`. A typical Def
-uses `Graphic_Single`, `<drawSize>(1.17,1.5)</drawSize>`,
+surface bounded approximately by `(27,16)` through `(101,94)`. A typical Def
+uses `Graphic_Single`, `<drawSize>(1.5,1.5)</drawSize>`,
 `<drawRotated>false</drawRotated>`, and `<allowFlip>false</allowFlip>`.
 
 The generated vector sources are under matching template directories in

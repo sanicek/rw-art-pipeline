@@ -37,11 +37,11 @@ DESK_CABINET_FACE = [(16, 75), (112, 75), (112, 98), (107, 103), (21, 103), (16,
 # The cube template keeps the proportions of one mirrored end segment from a
 # three-cell vanilla worktable, but uses original symmetric geometry. Its broad
 # top is neutral; the perimeter and front apron receive the stuff color.
-CUBE_TOP_OUTER = [(10, 8), (118, 8), (122, 12), (122, 98), (118, 102), (10, 102), (6, 98), (6, 12)]
-CUBE_TOP_FRAME = [(12, 12), (116, 12), (118, 14), (118, 96), (116, 98), (12, 98), (10, 96), (10, 14)]
-CUBE_SURFACE = [(16, 16), (112, 16), (114, 18), (114, 92), (112, 94), (16, 94), (14, 92), (14, 18)]
-CUBE_APRON = [(6, 96), (122, 96), (122, 116), (118, 120), (10, 120), (6, 116)]
-CUBE_APRON_FACE = [(10, 100), (118, 100), (118, 114), (114, 116), (14, 116), (10, 114)]
+CUBE_TOP_OUTER = [(22, 8), (106, 8), (109, 12), (109, 98), (106, 102), (22, 102), (19, 98), (19, 12)]
+CUBE_TOP_FRAME = [(23, 12), (105, 12), (106, 14), (106, 96), (105, 98), (23, 98), (22, 96), (22, 14)]
+CUBE_SURFACE = [(27, 16), (101, 16), (103, 18), (103, 92), (101, 94), (27, 94), (25, 92), (25, 18)]
+CUBE_APRON = [(19, 96), (109, 96), (109, 116), (106, 120), (22, 120), (19, 116)]
+CUBE_APRON_FACE = [(22, 100), (106, 100), (106, 114), (103, 116), (25, 116), (22, 114)]
 
 PALETTE = {
     "outline": "#343839",
@@ -190,13 +190,13 @@ def draw_cube_texture(size: int) -> Image.Image:
 
     draw.polygon(_points(CUBE_APRON, scale), fill=PALETTE["outline"])
     draw.polygon(_points(CUBE_APRON_FACE, scale), fill=PALETTE["primary_dark"])
-    draw.line(_points([(14, 102), (114, 102)], scale), fill=PALETTE["primary"], width=width)
-    draw.line(_points([(114, 116), (14, 116), (10, 114)], scale), fill=PALETTE["outline"], width=width)
+    draw.line(_points([(25, 102), (103, 102)], scale), fill=PALETTE["primary"], width=width)
+    draw.line(_points([(103, 116), (25, 116), (22, 114)], scale), fill=PALETTE["outline"], width=width)
 
     draw.polygon(_points(CUBE_TOP_OUTER, scale), fill=PALETTE["outline"])
     draw.polygon(_points(CUBE_TOP_FRAME, scale), fill=PALETTE["primary"])
 
-    surface_bounds = _box((14, 16, 115, 95), scale)
+    surface_bounds = _box((25, 16, 104, 95), scale)
     surface_width = surface_bounds[2] - surface_bounds[0]
     surface_height = surface_bounds[3] - surface_bounds[1]
     gradient = Image.new("RGBA", (surface_width, surface_height), (0, 0, 0, 0))
@@ -212,8 +212,8 @@ def draw_cube_texture(size: int) -> Image.Image:
     image.paste(gradient, surface_bounds[:2], surface_mask.crop(surface_bounds))
 
     draw = ImageDraw.Draw(image)
-    draw.line(_points([(12, 12), (116, 12), (118, 14)], scale), fill=PALETTE["primary_light"], width=width)
-    draw.line(_points([(118, 96), (116, 98), (12, 98)], scale), fill=PALETTE["primary_dark"], width=width)
+    draw.line(_points([(23, 12), (105, 12), (106, 14)], scale), fill=PALETTE["primary_light"], width=width)
+    draw.line(_points([(106, 96), (105, 98), (23, 98)], scale), fill=PALETTE["primary_dark"], width=width)
     return _mirror_right_half(image.resize((size, size), Image.Resampling.LANCZOS))
 
 
@@ -256,12 +256,12 @@ def cube_svg() -> bytes:
   <g id="front-apron" inkscape:groupmode="layer" inkscape:label="Stuff-colored front apron">
     <polygon points="{points['apron']}" fill="{PALETTE['outline']}"/>
     <polygon points="{points['apron_face']}" fill="{PALETTE['primary_dark']}"/>
-    <path d="M14 102 H114" fill="none" stroke="{PALETTE['primary']}" stroke-width="2"/>
+    <path d="M25 102 H103" fill="none" stroke="{PALETTE['primary']}" stroke-width="2"/>
   </g>
   <g id="stuff-shell" inkscape:groupmode="layer" inkscape:label="Stuff-colored top shell">
     <polygon points="{points['top_outer']}" fill="{PALETTE['outline']}"/>
     <polygon points="{points['top_frame']}" fill="{PALETTE['primary']}"/>
-    <path d="M12 12 H116 L118 14" fill="none" stroke="{PALETTE['primary_light']}" stroke-width="2"/>
+    <path d="M23 12 H105 L106 14" fill="none" stroke="{PALETTE['primary_light']}" stroke-width="2"/>
   </g>
   <g id="neutral-worktop" inkscape:groupmode="layer" inkscape:label="Neutral worktop and overlay area">
     <polygon points="{points['surface']}" fill="url(#surface-light)"/>

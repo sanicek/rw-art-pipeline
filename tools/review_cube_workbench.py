@@ -93,7 +93,7 @@ def main() -> None:
     place_sprite(sheet, recolor(texture, mask, STEEL), (930, 80, 1170, 350), "steel approximation")
 
     place_sprite(sheet, recolor(texture, mask, WOOD), (30, 390, 300, 780), "wood approximation")
-    for index, draw_size in enumerate(((1.10, 1.45), (1.17, 1.50), (1.25, 1.55))):
+    for index, draw_size in enumerate(((1.40, 1.40), (1.50, 1.50), (1.60, 1.60))):
         panel = scaled_cell(recolor(texture, mask, STEEL), draw_size)
         left = 330 + index * 280
         place_sprite(sheet, panel, (left, 390, left + 250, 780), f"simulated drawSize {draw_size}")

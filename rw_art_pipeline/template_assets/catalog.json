@@ -14,7 +14,7 @@
           "width": 1024,
           "height": 1024,
           "mode": "RGBA",
-          "sha256": "753ac928cc1522ea540373bf618fd08c875321e4f7d297e6ee00e42a0df99219"
+          "sha256": "81ce69079a90da3f77eeaf70f5355c4b88dc6a1b9a766966a17e606459eab3a9"
         },
         {
           "id": "rimworld-texture",
@@ -23,7 +23,7 @@
           "width": 128,
           "height": 128,
           "mode": "RGBA",
-          "sha256": "f8902f84876377985ea0cfec378d564e3a720b22aae9c52b601b012056f18d11"
+          "sha256": "fc3aff67a72a181a35b0dffcccce36a8d14632ddeb47a5cb594e5944421750a2"
         },
         {
           "id": "rimworld-color-mask",
@@ -32,7 +32,7 @@
           "width": 128,
           "height": 128,
           "mode": "RGBA",
-          "sha256": "cd7ae393251af51bb88ace0961fcd49d4456513fe7a0beb9dc4f8dee9d2fd865"
+          "sha256": "d04af9edf226198dbf6dca48571a1b0055f28766e97ee4ff943ff6021da68785"
         }
       ]
     },
