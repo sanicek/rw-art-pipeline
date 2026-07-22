@@ -74,10 +74,10 @@ approximately `(20,32)` through `(108,64)` in the SVG coordinate system.
 
 `generic-cube-workbench-1x1` is a broad, horizontally symmetric blank slab for
 one-cell buildings whose graphic stays fixed while their interaction spot can
-rotate. Its shell and front apron use the red stuff-color channel; its large
-neutral worktop uses the green secondary channel and provides an overlay-safe
-surface bounded approximately by `(27,16)` through `(101,94)`. A typical Def
-uses `Graphic_Single`, `<drawSize>(1.5,1.5)</drawSize>`,
+rotate. Its plain top and front apron share the red stuff-color channel, so the
+complete cube follows its material. The visible `96x104` slab leaves enough transparent
+canvas to fit one standard bench cell on a square draw mesh. A typical Def uses
+`Graphic_Single`, `<drawSize>(1.5,1.5)</drawSize>`,
 `<drawRotated>false</drawRotated>`, and `<allowFlip>false</allowFlip>`.
 
 The generated vector sources are under matching template directories in

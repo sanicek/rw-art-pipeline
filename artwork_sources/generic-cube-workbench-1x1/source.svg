@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 128 128">
   <title>Generic symmetric 1x1 RimWorld cube workbench</title>
-  <desc>Fixed-perspective blank workbench with a stuff-colored shell and neutral worktop.</desc>
+  <desc>Fixed-perspective blank workbench wholly recolored by its stuff.</desc>
   <defs>
     <radialGradient id="surface-light" cx="50%" cy="48%" r="65%">
       <stop offset="0" stop-color="#ececec"/>
       <stop offset="1" stop-color="#bcbcbc"/>
     </radialGradient>
   </defs>
-  <g id="front-apron" inkscape:groupmode="layer" inkscape:label="Stuff-colored front apron">
-    <polygon points="19,96 109,96 109,116 106,120 22,120 19,116" fill="#343839"/>
-    <polygon points="22,100 106,100 106,114 103,116 25,116 22,114" fill="#aeb4b3"/>
-    <path d="M25 102 H103" fill="none" stroke="#d9dddc" stroke-width="2"/>
-  </g>
-  <g id="stuff-shell" inkscape:groupmode="layer" inkscape:label="Stuff-colored top shell">
-    <polygon points="22,8 106,8 109,12 109,98 106,102 22,102 19,98 19,12" fill="#343839"/>
-    <polygon points="23,12 105,12 106,14 106,96 105,98 23,98 22,96 22,14" fill="#d9dddc"/>
-    <path d="M23 12 H105 L106 14" fill="none" stroke="#ffffff" stroke-width="2"/>
-  </g>
-  <g id="neutral-worktop" inkscape:groupmode="layer" inkscape:label="Neutral worktop and overlay area">
-    <polygon points="27,16 101,16 103,18 103,92 101,94 27,94 25,92 25,18" fill="url(#surface-light)"/>
+  <g id="cube" inkscape:groupmode="layer" inkscape:label="Stuff-colored cube">
+    <polygon points="19,94 109,94 109,110 19,110" fill="#343839"/>
+    <polygon points="22,98 106,98 106,107 22,107" fill="#aeb4b3"/>
+    <polygon points="19,12 109,12 109,98 19,98" fill="#343839"/>
+    <polygon points="22,15 106,15 106,95 22,95" fill="url(#surface-light)"/>
   </g>
 </svg>

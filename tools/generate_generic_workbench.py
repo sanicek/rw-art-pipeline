@@ -35,13 +35,12 @@ DESK_CABINET = [(10, 67), (118, 67), (118, 101), (111, 108), (17, 108), (10, 101
 DESK_CABINET_FACE = [(16, 75), (112, 75), (112, 98), (107, 103), (21, 103), (16, 98)]
 
 # The cube template keeps the proportions of one mirrored end segment from a
-# three-cell vanilla worktable, but uses original symmetric geometry. Its broad
-# top is neutral; the perimeter and front apron receive the stuff color.
-CUBE_TOP_OUTER = [(22, 8), (106, 8), (109, 12), (109, 98), (106, 102), (22, 102), (19, 98), (19, 12)]
-CUBE_TOP_FRAME = [(23, 12), (105, 12), (106, 14), (106, 96), (105, 98), (23, 98), (22, 96), (22, 14)]
-CUBE_SURFACE = [(27, 16), (101, 16), (103, 18), (103, 92), (101, 94), (27, 94), (25, 92), (25, 18)]
-CUBE_APRON = [(19, 96), (109, 96), (109, 116), (106, 120), (22, 120), (19, 116)]
-CUBE_APRON_FACE = [(22, 100), (106, 100), (106, 114), (103, 116), (25, 116), (22, 114)]
+# three-cell vanilla worktable, but uses original symmetric geometry. One plain
+# top and front apron form a neutral grayscale base that stuff recolors wholly.
+CUBE_TOP = [(19, 12), (109, 12), (109, 98), (19, 98)]
+CUBE_SURFACE = [(22, 15), (106, 15), (106, 95), (22, 95)]
+CUBE_APRON = [(19, 94), (109, 94), (109, 110), (19, 110)]
+CUBE_APRON_FACE = [(22, 98), (106, 98), (106, 107), (22, 107)]
 
 PALETTE = {
     "outline": "#343839",
@@ -186,17 +185,12 @@ def draw_cube_texture(size: int) -> Image.Image:
     scale = size * supersampling / CANVAS
     image = Image.new("RGBA", (size * supersampling, size * supersampling), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
-    width = max(1, round(2 * scale))
 
     draw.polygon(_points(CUBE_APRON, scale), fill=PALETTE["outline"])
     draw.polygon(_points(CUBE_APRON_FACE, scale), fill=PALETTE["primary_dark"])
-    draw.line(_points([(25, 102), (103, 102)], scale), fill=PALETTE["primary"], width=width)
-    draw.line(_points([(103, 116), (25, 116), (22, 114)], scale), fill=PALETTE["outline"], width=width)
+    draw.polygon(_points(CUBE_TOP, scale), fill=PALETTE["outline"])
 
-    draw.polygon(_points(CUBE_TOP_OUTER, scale), fill=PALETTE["outline"])
-    draw.polygon(_points(CUBE_TOP_FRAME, scale), fill=PALETTE["primary"])
-
-    surface_bounds = _box((25, 16, 104, 95), scale)
+    surface_bounds = _box((22, 15, 107, 96), scale)
     surface_width = surface_bounds[2] - surface_bounds[0]
     surface_height = surface_bounds[3] - surface_bounds[1]
     gradient = Image.new("RGBA", (surface_width, surface_height), (0, 0, 0, 0))
@@ -211,23 +205,17 @@ def draw_cube_texture(size: int) -> Image.Image:
     ImageDraw.Draw(surface_mask).polygon(_points(CUBE_SURFACE, scale), fill=255)
     image.paste(gradient, surface_bounds[:2], surface_mask.crop(surface_bounds))
 
-    draw = ImageDraw.Draw(image)
-    draw.line(_points([(23, 12), (105, 12), (106, 14)], scale), fill=PALETTE["primary_light"], width=width)
-    draw.line(_points([(106, 96), (105, 98), (23, 98)], scale), fill=PALETTE["primary_dark"], width=width)
     return _mirror_right_half(image.resize((size, size), Image.Resampling.LANCZOS))
 
 
 def draw_cube_mask(texture: Image.Image) -> Image.Image:
-    """Map stuff color to the cube shell while keeping its worktop neutral."""
+    """Map the stuff color over the complete blank cube."""
 
     scale = 4
     mask = Image.new("RGBA", (CANVAS * scale, CANVAS * scale), (0, 0, 0, 0))
     draw = ImageDraw.Draw(mask)
-    draw.polygon(_points(CUBE_APRON, scale), fill=(0, 0, 0, 255))
-    draw.polygon(_points(CUBE_APRON_FACE, scale), fill=(255, 0, 0, 255))
-    draw.polygon(_points(CUBE_TOP_OUTER, scale), fill=(0, 0, 0, 255))
-    draw.polygon(_points(CUBE_TOP_FRAME, scale), fill=(255, 0, 0, 255))
-    draw.polygon(_points(CUBE_SURFACE, scale), fill=(0, 255, 0, 255))
+    draw.polygon(_points(CUBE_APRON, scale), fill=(255, 0, 0, 255))
+    draw.polygon(_points(CUBE_TOP, scale), fill=(255, 0, 0, 255))
     mask = mask.resize((CANVAS, CANVAS), Image.Resampling.LANCZOS)
     mask.putalpha(texture.getchannel("A"))
     return _mirror_right_half(mask)
@@ -237,8 +225,7 @@ def cube_svg() -> bytes:
     """Emit an editable SVG carrying the same template geometry and channels."""
 
     points = {
-        "top_outer": " ".join(f"{x},{y}" for x, y in CUBE_TOP_OUTER),
-        "top_frame": " ".join(f"{x},{y}" for x, y in CUBE_TOP_FRAME),
+        "top": " ".join(f"{x},{y}" for x, y in CUBE_TOP),
         "surface": " ".join(f"{x},{y}" for x, y in CUBE_SURFACE),
         "apron": " ".join(f"{x},{y}" for x, y in CUBE_APRON),
         "apron_face": " ".join(f"{x},{y}" for x, y in CUBE_APRON_FACE),
@@ -246,24 +233,17 @@ def cube_svg() -> bytes:
     content = f'''<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 128 128">
   <title>Generic symmetric 1x1 RimWorld cube workbench</title>
-  <desc>Fixed-perspective blank workbench with a stuff-colored shell and neutral worktop.</desc>
+  <desc>Fixed-perspective blank workbench wholly recolored by its stuff.</desc>
   <defs>
     <radialGradient id="surface-light" cx="50%" cy="48%" r="65%">
       <stop offset="0" stop-color="#ececec"/>
       <stop offset="1" stop-color="#bcbcbc"/>
     </radialGradient>
   </defs>
-  <g id="front-apron" inkscape:groupmode="layer" inkscape:label="Stuff-colored front apron">
+  <g id="cube" inkscape:groupmode="layer" inkscape:label="Stuff-colored cube">
     <polygon points="{points['apron']}" fill="{PALETTE['outline']}"/>
     <polygon points="{points['apron_face']}" fill="{PALETTE['primary_dark']}"/>
-    <path d="M25 102 H103" fill="none" stroke="{PALETTE['primary']}" stroke-width="2"/>
-  </g>
-  <g id="stuff-shell" inkscape:groupmode="layer" inkscape:label="Stuff-colored top shell">
-    <polygon points="{points['top_outer']}" fill="{PALETTE['outline']}"/>
-    <polygon points="{points['top_frame']}" fill="{PALETTE['primary']}"/>
-    <path d="M23 12 H105 L106 14" fill="none" stroke="{PALETTE['primary_light']}" stroke-width="2"/>
-  </g>
-  <g id="neutral-worktop" inkscape:groupmode="layer" inkscape:label="Neutral worktop and overlay area">
+    <polygon points="{points['top']}" fill="{PALETTE['outline']}"/>
     <polygon points="{points['surface']}" fill="url(#surface-light)"/>
   </g>
 </svg>
