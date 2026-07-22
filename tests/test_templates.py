@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from contextlib import redirect_stdout
 from importlib import resources
 from pathlib import Path
@@ -23,24 +24,31 @@ from rw_art_pipeline.template_catalog import (
     templates,
 )
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+from generate_generic_workbench import draw_cube_mask, draw_cube_texture  # noqa: E402
+
 
 class TemplateTests(unittest.TestCase):
     """The bundled catalog is a stable byte-level distribution contract."""
 
     def test_catalog_exposes_templates_and_sanicek_badge_variants(self):
         catalog = templates()
-        self.assertEqual(["generic-workbench-1x1", "sanicek-badge"], [template.id for template in catalog])
+        self.assertEqual(
+            ["generic-cube-workbench-1x1", "generic-desk-workbench-1x1", "generic-workbench-1x1", "sanicek-badge"],
+            [template.id for template in catalog],
+        )
         badge = get_template("sanicek-badge")
         self.assertEqual("MIT", badge.license)
         self.assertEqual({"source", "rimworld-mod-icon"}, {variant.id for variant in badge.variants})
 
     def test_catalog_exposes_generic_workbench_variants(self):
-        workbench = get_template("generic-workbench-1x1")
-        self.assertEqual("MIT", workbench.license)
-        self.assertEqual(
-            {"source", "rimworld-texture", "rimworld-color-mask"},
-            {variant.id for variant in workbench.variants},
-        )
+        for template_id in ("generic-workbench-1x1", "generic-desk-workbench-1x1", "generic-cube-workbench-1x1"):
+            workbench = get_template(template_id)
+            self.assertEqual("MIT", workbench.license)
+            self.assertEqual(
+                {"source", "rimworld-texture", "rimworld-color-mask"},
+                {variant.id for variant in workbench.variants},
+            )
 
     def test_variants_match_their_exact_png_contracts(self):
         expected = {
@@ -84,12 +92,99 @@ class TemplateTests(unittest.TestCase):
             for point in ((20, 28), (64, 110), (12, 50), (16, 96), (118, 50)):
                 self.assertTrue(all(channel <= 1 for channel in mask.getpixel(point)[:3]))
 
+    def test_desk_workbench_variants_and_mask_contract(self):
+        expected = {
+            "source": ((1024, 1024), "d74c83dcbd241efa1189704406fe1109ec4428dab9bebf33e17b2c4a5b1fffb1"),
+            "rimworld-texture": ((128, 128), "1a2dbfaad2f507040967324c0da63e5b3ad1ebebefd22c81308e9970fdb9681d"),
+            "rimworld-color-mask": ((128, 128), "76e4f0a5e3c0b6b83f0df3f9aa276962bb82cc2e39b832115fca6d303488e2e2"),
+        }
+        for variant_id, (size, digest) in expected.items():
+            payload = template_bytes("generic-desk-workbench-1x1", variant_id)
+            self.assertEqual(digest, hashlib.sha256(payload).hexdigest())
+            with Image.open(io.BytesIO(payload)) as image:
+                image.load()
+                self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+
+        with Image.open(io.BytesIO(template_bytes("generic-desk-workbench-1x1", "rimworld-texture"))) as texture:
+            texture.load()
+            texture_alpha = texture.getchannel("A").tobytes()
+        with Image.open(io.BytesIO(template_bytes("generic-desk-workbench-1x1", "rimworld-color-mask"))) as mask:
+            mask.load()
+            self.assertEqual(texture_alpha, mask.getchannel("A").tobytes())
+            self.assertEqual((0, 0), mask.getchannel("B").getextrema())
+            self.assertEqual((255, 0, 0), mask.getpixel((14, 50))[:3])
+            self.assertEqual((255, 0, 0), mask.getpixel((40, 90))[:3])
+            self.assertEqual((0, 255, 0), mask.getpixel((64, 50))[:3])
+            for point in ((8, 50), (22, 90), (64, 90), (64, 115)):
+                self.assertTrue(all(channel <= 8 for channel in mask.getpixel(point)[:3]))
+
+    def test_cube_candidate_is_symmetric_and_uses_expected_mask_channels(self):
+        texture = draw_cube_texture(128)
+        mask = draw_cube_mask(texture)
+        self.assertEqual((128, 128), texture.size)
+        self.assertEqual("RGBA", texture.mode)
+        self.assertEqual((18, 10, 110, 113), texture.getchannel("A").getbbox())
+        self.assertLess(texture.getpixel((64, 16))[0], 100)
+        self.assertLess(texture.getpixel((64, 17))[0], 100)
+        self.assertGreater(min(texture.getpixel((64, y))[0] for y in range(94, 100)), 120)
+        self.assertLess(texture.getpixel((64, 100))[0], texture.getpixel((64, 90))[0])
+        self.assertEqual(texture.getchannel("A").tobytes(), mask.getchannel("A").tobytes())
+        self.assertEqual(texture.getchannel("A").tobytes(), texture.transpose(Image.Transpose.FLIP_LEFT_RIGHT).getchannel("A").tobytes())
+        self.assertEqual((255, 0, 0), mask.getpixel((20, 50))[:3])
+        self.assertEqual((255, 0, 0), mask.getpixel((64, 60))[:3])
+        self.assertEqual((255, 0, 0), mask.getpixel((64, 104))[:3])
+        self.assertEqual((0, 0), mask.getchannel("G").getextrema())
+        self.assertTrue(all(channel <= 8 for channel in mask.getpixel((14, 50))[:3]))
+
+    def test_cube_workbench_variants_match_their_exact_png_contracts(self):
+        expected = {
+            "source": ((1024, 1024), "90232b79a46e38347cac9d4e37cdefaa1a26ed187648a9b1b3c648a9e3879013"),
+            "rimworld-texture": ((128, 128), "3dd636662abd3032c2989dc7305f9e2e62982701cdb47ab28976e6bc05f50a1f"),
+            "rimworld-color-mask": ((128, 128), "3abf5f5fc20e76e9c7e55dc1ca41dd31ac39e2948f5ab425cbba8177541a1adc"),
+        }
+        for variant_id, (size, digest) in expected.items():
+            payload = template_bytes("generic-cube-workbench-1x1", variant_id)
+            self.assertEqual(digest, hashlib.sha256(payload).hexdigest())
+            with Image.open(io.BytesIO(payload)) as image:
+                image.load()
+                self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+
+    def test_cube_workbench_rimworld_reference_preserves_rendering_contract(self):
+        root = Path(__file__).resolve().parents[1]
+        thing = ET.parse(root / "reference-assets/generic-cube-workbench-1x1/ThingDef.xml").getroot().find("ThingDef")
+        self.assertIsNotNone(thing)
+        self.assertEqual("(1,1)", thing.findtext("size"))
+        self.assertEqual("true", thing.findtext("rotatable"))
+        self.assertEqual("true", thing.findtext("hasInteractionCell"))
+        self.assertEqual("(0,0,-1)", thing.findtext("interactionCellOffset"))
+        self.assertEqual("true", thing.findtext("castEdgeShadows"))
+        self.assertEqual("0.20", thing.findtext("staticSunShadowHeight"))
+        graphic = thing.find("graphicData")
+        self.assertIsNotNone(graphic)
+        self.assertEqual(
+            {
+                "texPath": "Things/Building/YourMod/YourWorkbench",
+                "graphicClass": "Graphic_Single",
+                "shaderType": "CutoutComplex",
+                "drawSize": "(1.5,1.5)",
+                "drawRotated": "false",
+                "allowFlip": "false",
+                "drawOffset": "(0,0,-0.1)",
+            },
+            {child.tag: child.text for child in graphic},
+        )
+
     def test_workbench_svg_defines_every_referenced_palette_variable(self):
         root = Path(__file__).resolve().parents[1]
-        svg = (root / "artwork_sources/generic-workbench-1x1/source.svg").read_text(encoding="utf-8")
-        definitions = set(re.findall(r"(--[a-z-]+)\s*:", svg))
-        references = set(re.findall(r"var\((--[a-z-]+)\)", svg))
-        self.assertEqual(set(), references - definitions)
+        for source in (
+            root / "artwork_sources/generic-workbench-1x1/source.svg",
+            root / "artwork_sources/generic-desk-workbench-1x1/source.svg",
+            root / "artwork_sources/generic-cube-workbench-1x1/source.svg",
+        ):
+            svg = source.read_text(encoding="utf-8")
+            definitions = set(re.findall(r"(--[a-z-]+)\s*:", svg))
+            references = set(re.findall(r"var\((--[a-z-]+)\)", svg))
+            self.assertEqual(set(), references - definitions)
 
     def test_workbench_assets_are_reproducible(self):
         root = Path(__file__).resolve().parents[1]

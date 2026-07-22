@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 128 128">
+  <title>Generic symmetric 1x1 RimWorld cube workbench</title>
+  <desc>Fixed-perspective blank workbench wholly recolored by its stuff.</desc>
+  <defs>
+    <radialGradient id="surface-light" cx="50%" cy="48%" r="65%">
+      <stop offset="0" stop-color="#ececec"/>
+      <stop offset="1" stop-color="#bcbcbc"/>
+    </radialGradient>
+  </defs>
+  <g id="cube" inkscape:groupmode="layer" inkscape:label="Stuff-colored cube">
+    <polygon points="21,94 107,94 107,110 21,110" fill="#343839"/>
+    <polygon points="21,13 107,13 107,98 21,98" fill="#343839"/>
+    <polygon points="26,18 102,18 102,94 26,94" fill="url(#surface-light)"/>
+    <polygon points="26,94 102,94 102,105 26,105" fill="#aeb4b3"/>
+  </g>
+</svg>

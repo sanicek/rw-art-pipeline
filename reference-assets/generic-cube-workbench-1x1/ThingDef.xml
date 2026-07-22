@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!--
+  Canonical RimWorld 1.6 setup for generic-cube-workbench-1x1. Export the
+  diffuse texture as YourWorkbench.png and the red-channel mask beside it as
+  YourWorkbench_m.png. Replace only the texPath prefix for the consuming mod.
+
+  Keep the draw mesh square: RimWorld swaps non-square mesh dimensions for
+  horizontal placement rotations even when drawRotated is false. Do not add
+  directional draw offsets; they take precedence over the common southward
+  offset that aligns this sprite with vanilla worktables.
+  -->
+  <ThingDef Name="CanonicalCubeWorkbench1x1" Abstract="True">
+    <graphicData>
+      <texPath>Things/Building/YourMod/YourWorkbench</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>CutoutComplex</shaderType>
+      <drawSize>(1.5,1.5)</drawSize>
+      <drawRotated>false</drawRotated>
+      <allowFlip>false</allowFlip>
+      <drawOffset>(0,0,-0.1)</drawOffset>
+    </graphicData>
+    <castEdgeShadows>true</castEdgeShadows>
+    <staticSunShadowHeight>0.20</staticSunShadowHeight>
+    <size>(1,1)</size>
+    <rotatable>true</rotatable>
+    <hasInteractionCell>true</hasInteractionCell>
+    <interactionCellOffset>(0,0,-1)</interactionCellOffset>
+  </ThingDef>
+</Defs>

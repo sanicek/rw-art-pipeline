@@ -2,6 +2,76 @@
   "schema_version": 1,
   "templates": [
     {
+      "id": "generic-cube-workbench-1x1",
+      "name": "Generic Cube Workbench 1x1",
+      "description": "Canonical symmetric fixed-perspective blank cube workbench with vanilla-style geometry, full-stuff recoloring, and no preferred interaction side; generated vector and RimWorld XML references are available in the source repository.",
+      "license": "MIT",
+      "variants": [
+        {
+          "id": "source",
+          "role": "canonical-source",
+          "path": "generic-cube-workbench-1x1/source.png",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "sha256": "90232b79a46e38347cac9d4e37cdefaa1a26ed187648a9b1b3c648a9e3879013"
+        },
+        {
+          "id": "rimworld-texture",
+          "role": "rimworld-1x1-fixed-texture",
+          "path": "generic-cube-workbench-1x1/rimworld-texture.png",
+          "width": 128,
+          "height": 128,
+          "mode": "RGBA",
+          "sha256": "3dd636662abd3032c2989dc7305f9e2e62982701cdb47ab28976e6bc05f50a1f"
+        },
+        {
+          "id": "rimworld-color-mask",
+          "role": "rimworld-cutout-complex-mask",
+          "path": "generic-cube-workbench-1x1/rimworld-texturem.png",
+          "width": 128,
+          "height": 128,
+          "mode": "RGBA",
+          "sha256": "3abf5f5fc20e76e9c7e55dc1ca41dd31ac39e2948f5ab425cbba8177541a1adc"
+        }
+      ]
+    },
+    {
+      "id": "generic-desk-workbench-1x1",
+      "name": "Generic Desk Workbench 1x1",
+      "description": "Boxy south-facing white desk/workbench base with an enclosed cabinet, empty surface, and two recolor channels; generated vector source is available in the source repository.",
+      "license": "MIT",
+      "variants": [
+        {
+          "id": "source",
+          "role": "canonical-source",
+          "path": "generic-desk-workbench-1x1/source.png",
+          "width": 1024,
+          "height": 1024,
+          "mode": "RGBA",
+          "sha256": "d74c83dcbd241efa1189704406fe1109ec4428dab9bebf33e17b2c4a5b1fffb1"
+        },
+        {
+          "id": "rimworld-texture",
+          "role": "rimworld-1x1-south-texture",
+          "path": "generic-desk-workbench-1x1/rimworld-texture.png",
+          "width": 128,
+          "height": 128,
+          "mode": "RGBA",
+          "sha256": "1a2dbfaad2f507040967324c0da63e5b3ad1ebebefd22c81308e9970fdb9681d"
+        },
+        {
+          "id": "rimworld-color-mask",
+          "role": "rimworld-cutout-complex-mask",
+          "path": "generic-desk-workbench-1x1/rimworld-texturem.png",
+          "width": 128,
+          "height": 128,
+          "mode": "RGBA",
+          "sha256": "76e4f0a5e3c0b6b83f0df3f9aa276962bb82cc2e39b832115fca6d303488e2e2"
+        }
+      ]
+    },
+    {
       "id": "generic-workbench-1x1",
       "name": "Generic 1x1 Workbench",
       "description": "South-facing pseudo-orthographic white industrial workbench base with an empty surface and two recolor channels; generated vector source is available in the source repository.",

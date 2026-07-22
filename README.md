@@ -39,6 +39,14 @@ rw-art templates export sanicek-badge rimworld-mod-icon ./About/ModIcon.png
 # South-facing 1x1 workbench base and its CutoutComplex recolor mask.
 rw-art templates export generic-workbench-1x1 rimworld-texture ./Textures/Things/Building/GenericWorkbench.png
 rw-art templates export generic-workbench-1x1 rimworld-color-mask ./Textures/Things/Building/GenericWorkbench_m.png
+
+# Boxier enclosed desk/workbench alternative.
+rw-art templates export generic-desk-workbench-1x1 rimworld-texture ./Textures/Things/Building/GenericDeskWorkbench.png
+rw-art templates export generic-desk-workbench-1x1 rimworld-color-mask ./Textures/Things/Building/GenericDeskWorkbench_m.png
+
+# Symmetric blank cube for a fixed graphic with a rotatable interaction spot.
+rw-art templates export generic-cube-workbench-1x1 rimworld-texture ./Textures/Things/Building/GenericCubeWorkbench.png
+rw-art templates export generic-cube-workbench-1x1 rimworld-color-mask ./Textures/Things/Building/GenericCubeWorkbench_m.png
 ```
 
 Exports never overwrite an existing file unless `--replace` is supplied. The
@@ -59,13 +67,36 @@ bundled texture is suitable for `Graphic_Single` buildings that keep a fixed
 presentation. Treat it as the south texture when deriving a true
 `Graphic_Multi` set; other facings need corresponding perspective changes.
 
-The generated vector source is
-`artwork_sources/generic-workbench-1x1/source.svg`. It is available in a source
-checkout, but is not included in installed wheels. Its named groups separate
-the neutral hardware, primary frame tint, secondary work-surface tint, and a
-hidden overlay guide. The Python generator is authoritative: change `PALETTE`
-or geometry in `tools/generate_generic_workbench.py`, then regenerate the SVG
-and catalog PNGs with:
+`generic-desk-workbench-1x1` uses the same perspective and color-channel
+contract but has a broader rectangular top over a full-width two-door cabinet.
+It has no visible legs or cast shadow. Its overlay-safe work surface spans
+approximately `(20,32)` through `(108,64)` in the SVG coordinate system.
+
+`generic-cube-workbench-1x1` is the canonical broad, horizontally symmetric
+blank slab for one-cell buildings whose graphic stays fixed while their
+interaction spot can rotate. Its plain top and front apron share the red
+stuff-color channel, so the complete cube follows its material. The darker
+apron meets the top directly, so their tonal change defines the front edge
+without a black divider. The visible `92x103` slab leaves enough transparent
+canvas to fit one standard bench cell on a square draw mesh. A typical Def uses
+`Graphic_Single`, `<drawSize>(1.5,1.5)</drawSize>`,
+`<drawRotated>false</drawRotated>`, and `<allowFlip>false</allowFlip>`.
+
+The complete, validated RimWorld 1.6 setup is
+[`reference-assets/generic-cube-workbench-1x1/ThingDef.xml`](reference-assets/generic-cube-workbench-1x1/ThingDef.xml).
+It includes the exact `Graphic_Single`, `CutoutComplex`, square draw mesh,
+rotation, shadow, interaction-cell, and common southward offset settings used
+for the accepted in-game appearance. A consuming Def must also be stuffable for
+the red-channel mask to receive its material color. Keep directional draw
+offsets absent because they override the common `(0,0,-0.1)` alignment offset.
+
+The generated vector sources are under matching template directories in
+`artwork_sources/`. They are available in a source checkout but are not included
+in installed wheels. Named groups separate the shell, work surface, hardware,
+and overlay-safe regions provided by each design. The Python generator is
+authoritative: change `PALETTE` or geometry in
+`tools/generate_generic_workbench.py`, then regenerate the SVG and catalog PNGs
+with:
 
 ```bash
 python3 tools/generate_generic_workbench.py --replace-source
