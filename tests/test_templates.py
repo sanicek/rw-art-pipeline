@@ -31,15 +31,24 @@ from generate_generic_workbench import draw_cube_mask, draw_cube_texture  # noqa
 class TemplateTests(unittest.TestCase):
     """The bundled catalog is a stable byte-level distribution contract."""
 
-    def test_catalog_exposes_templates_and_sanicek_badge_variants(self):
+    def test_catalog_exposes_templates_and_sanicek_logo_variants(self):
         catalog = templates()
         self.assertEqual(
-            ["generic-cube-workbench-1x1", "generic-desk-workbench-1x1", "generic-workbench-1x1", "sanicek-badge"],
+            [
+                "generic-cube-workbench-1x1",
+                "generic-desk-workbench-1x1",
+                "generic-workbench-1x1",
+                "sanicek-badge",
+                "sanicek-s-logo",
+            ],
             [template.id for template in catalog],
         )
         badge = get_template("sanicek-badge")
         self.assertEqual("MIT", badge.license)
         self.assertEqual({"source", "rimworld-mod-icon"}, {variant.id for variant in badge.variants})
+        logo = get_template("sanicek-s-logo")
+        self.assertEqual("MIT", logo.license)
+        self.assertEqual({"source", "rimworld-mod-icon"}, {variant.id for variant in logo.variants})
 
     def test_catalog_exposes_generic_workbench_variants(self):
         for template_id in ("generic-workbench-1x1", "generic-desk-workbench-1x1", "generic-cube-workbench-1x1"):
@@ -64,6 +73,22 @@ class TemplateTests(unittest.TestCase):
                 with Image.open(path) as image:
                     image.load()
                     self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+
+    def test_s_logo_variants_match_their_exact_transparent_png_contracts(self):
+        expected = {
+            "source": ((1254, 1254), "cc491992dd12ec512ddca52ad1dad05a5facf219e93cd60cbef30aeff4ec440b"),
+            "rimworld-mod-icon": ((256, 256), "6d8d16106c8c3154db2b927c56368038698e3d55d56c55dc6c5ac29ad7744327"),
+        }
+        for variant_id, (size, digest) in expected.items():
+            payload = template_bytes("sanicek-s-logo", variant_id)
+            self.assertEqual(digest, hashlib.sha256(payload).hexdigest())
+            with Image.open(io.BytesIO(payload)) as image:
+                image.load()
+                self.assertEqual(("PNG", "RGBA", size), (image.format, image.mode, image.size))
+                alpha = image.getchannel("A")
+                self.assertEqual((0, 255), alpha.getextrema())
+                self.assertLess(alpha.getpixel((0, 0)), 32)
+                self.assertLess(alpha.getpixel((size[0] // 2, size[1] // 6)), 32)
 
     def test_workbench_variants_match_their_exact_png_contracts(self):
         expected = {

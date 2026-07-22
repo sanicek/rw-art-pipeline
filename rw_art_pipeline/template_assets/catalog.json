@@ -131,6 +131,32 @@
           "sha256": "87fb2537410403305cf8970a97046a48e24ca1f7fb645ff32e212206a8eb2d53"
         }
       ]
+    },
+    {
+      "id": "sanicek-s-logo",
+      "name": "Sanicek S Logo",
+      "description": "Reusable grayscale metallic S logo in a circular frame with a transparent background.",
+      "license": "MIT",
+      "variants": [
+        {
+          "id": "source",
+          "role": "canonical-source",
+          "path": "sanicek-s-logo/source.png",
+          "width": 1254,
+          "height": 1254,
+          "mode": "RGBA",
+          "sha256": "cc491992dd12ec512ddca52ad1dad05a5facf219e93cd60cbef30aeff4ec440b"
+        },
+        {
+          "id": "rimworld-mod-icon",
+          "role": "rimworld-mod-icon-base",
+          "path": "sanicek-s-logo/rimworld-mod-icon.png",
+          "width": 256,
+          "height": 256,
+          "mode": "RGBA",
+          "sha256": "6d8d16106c8c3154db2b927c56368038698e3d55d56c55dc6c5ac29ad7744327"
+        }
+      ]
     }
   ]
 }

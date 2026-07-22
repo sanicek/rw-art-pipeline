@@ -36,6 +36,9 @@ rw-art templates export sanicek-badge source ./sanicek-logo.png
 # Normalized 256x256 RGBA frame for RimWorld's About/ModIcon.png.
 rw-art templates export sanicek-badge rimworld-mod-icon ./About/ModIcon.png
 
+# Standalone metallic S logo alternative with a transparent background.
+rw-art templates export sanicek-s-logo rimworld-mod-icon ./About/ModIcon.png
+
 # South-facing 1x1 workbench base and its CutoutComplex recolor mask.
 rw-art templates export generic-workbench-1x1 rimworld-texture ./Textures/Things/Building/GenericWorkbench.png
 rw-art templates export generic-workbench-1x1 rimworld-color-mask ./Textures/Things/Building/GenericWorkbench_m.png
